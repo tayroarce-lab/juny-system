@@ -35,10 +35,12 @@ export interface SequenceTracker {
 }
 
 export interface DashboardMetrics {
-  total_leads: number | null;
-  total_contacted: number | null;
-  total_replied: number | null;
-  active_in_sequence: number | null;
+  total_discovered: number | null; // raw_channels — null means blocked by RLS, not zero
+  total_qualified: number | null; // qualified_channels — null means blocked by RLS, not zero
+  total_leads: number | null; // ready_to_send (enriched w/ email, ready to email)
+  total_contacted: number | null; // ready_to_send.status in (in_sequence, replied)
+  total_replied: number | null; // ready_to_send.status = replied
+  active_in_sequence: number | null; // ready_to_send.status = in_sequence
   reply_rate_percentage: number | null;
 }
 

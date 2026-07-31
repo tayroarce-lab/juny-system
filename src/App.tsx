@@ -8,6 +8,8 @@ import {
   AlertCircle,
   Info,
   Loader2,
+  Search,
+  CheckCircle2,
 } from 'lucide-react';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useAuth } from './hooks/useAuth';
@@ -104,47 +106,66 @@ export default function App() {
           )}
 
           {/* ── KPI Cards ────────────────────────────────────── */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
-              title="Total Prospectos"
-              value={metrics?.total_leads ?? 0}
-              icon={Users}
+              title="Canales Descubiertos"
+              value={metrics ? metrics.total_discovered : 0}
+              icon={Search}
               color="indigo"
+              subtitle="raw_channels"
               loading={loading}
               delay={0}
+            />
+            <StatCard
+              title="Canales Calificados"
+              value={metrics ? metrics.total_qualified : 0}
+              icon={CheckCircle2}
+              color="violet"
+              subtitle="qualified_channels"
+              loading={loading}
+              delay={50}
+            />
+            <StatCard
+              title="Listos para Enviar"
+              value={metrics?.total_leads ?? 0}
+              icon={Users}
+              color="cyan"
+              subtitle="Con email extraído"
+              loading={loading}
+              delay={100}
             />
             <StatCard
               title="Contactados"
               value={metrics?.total_contacted ?? 0}
               icon={Send}
-              color="violet"
-              loading={loading}
-              delay={50}
-            />
-            <StatCard
-              title="Secuencias Activas"
-              value={metrics?.active_in_sequence ?? 0}
-              icon={Activity}
-              color="cyan"
-              loading={loading}
-              delay={100}
-            />
-            <StatCard
-              title="Respuestas"
-              value={metrics?.total_replied ?? 0}
-              icon={MessageSquareReply}
               color="emerald"
               loading={loading}
               delay={150}
             />
             <StatCard
+              title="Secuencias Activas"
+              value={metrics?.active_in_sequence ?? 0}
+              icon={Activity}
+              color="amber"
+              loading={loading}
+              delay={200}
+            />
+            <StatCard
+              title="Respuestas"
+              value={metrics?.total_replied ?? 0}
+              icon={MessageSquareReply}
+              color="indigo"
+              loading={loading}
+              delay={250}
+            />
+            <StatCard
               title="Reply Rate"
               value={metrics?.reply_rate_percentage?.toFixed(1) ?? '0.0'}
               icon={TrendingUp}
-              color="amber"
+              color="violet"
               suffix="%"
               loading={loading}
-              delay={200}
+              delay={300}
             />
           </section>
 

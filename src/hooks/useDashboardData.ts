@@ -20,6 +20,8 @@ function lastFollowup(s: SequenceTracker): string | null {
 // ─── Demo data for when Supabase isn't configured ───────────────────
 function getDemoData() {
   const metrics: DashboardMetrics = {
+    total_discovered: 8420,
+    total_qualified: 3180,
     total_leads: 1247,
     total_contacted: 843,
     total_replied: 127,
@@ -94,14 +96,66 @@ export function useDashboardData() {
     }
 
     try {
-      // 1. KPI metrics from the SQL view
-      const { data: metricsData, error: metricsErr } = await supabase
-        .from('dashboard_metrics')
-        .select('*')
-        .single();
+      // 1. KPI counts — computed here from the source tables rather than the
+      //    `dashboard_metrics` DB view. The view filtered on
+      //    sequence_tracker.day1_sent_at, a column n8n never writes to (it
+      //    writes day1_sent instead), so total_contacted/active_in_sequence/
+      //    total_replied always came back 0 regardless of real volume.
+      //    `count: 'exact', head: true` also avoids truncation at Supabase's
+      //    default row cap, unlike counting a fetched array's .length.
+      const countExact = async (
+        table: string,
+        filter?: (q: any) => any
+      ): Promise<number | null> => {
+        let q = supabase!.from(table).select('*', { count: 'exact', head: true });
+        if (filter) q = filter(q);
+        const { count, error } = await q;
+        if (error) {
+          console.warn(`${table} count failed (possibly RLS):`, error.message);
+          return null;
+        }
+        return count;
+      };
 
-      if (metricsErr) throw metricsErr;
-      setMetrics(metricsData as DashboardMetrics);
+      const [totalDiscovered, totalQualified, totalLeads, inSequenceCount, repliedCount] =
+        await Promise.all([
+          countExact('raw_channels'),
+          countExact('qualified_channels'),
+          countExact('ready_to_send'),
+          countExact('ready_to_send', (q) => q.eq('status', 'in_sequence')),
+          countExact('ready_to_send', (q) => q.eq('status', 'replied')),
+        ]);
+
+      const totalContacted =
+        inSequenceCount != null && repliedCount != null
+          ? inSequenceCount + repliedCount
+          : null;
+
+      // Supabase returns 200 OK with count: 0 (not an error) when RLS
+      // silently blocks a table for the anon role — indistinguishable from
+      // a genuinely empty table by response shape alone. But the funnel is
+      // monotonic (discovered >= qualified >= ready_to_send), so a count
+      // that falls below a known downstream total is proof of a blocked
+      // table, not a real business number. Treat it as unavailable rather
+      // than display a misleading (too-low) figure.
+      const floor = totalLeads ?? 0;
+      const qualifiedReliable = totalQualified != null && totalQualified >= floor;
+      const discoveredReliable = totalDiscovered != null && totalDiscovered >= floor;
+
+      setMetrics({
+        total_discovered: discoveredReliable ? totalDiscovered : null,
+        total_qualified: qualifiedReliable ? totalQualified : null,
+        total_leads: totalLeads,
+        total_contacted: totalContacted,
+        active_in_sequence: inSequenceCount,
+        total_replied: repliedCount,
+        reply_rate_percentage:
+          totalContacted && repliedCount != null
+            ? (repliedCount / totalContacted) * 100
+            : totalContacted === 0
+              ? 0
+              : null,
+      });
 
       // 2. Sequence tracker (for funnel + account perf + prospect enrichment)
       const { data: sequences, error: seqErr } = await supabase

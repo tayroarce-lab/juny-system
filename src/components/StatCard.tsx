@@ -3,10 +3,11 @@ import { LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
-  value: string | number;
+  value: string | number | null;
   icon: LucideIcon;
   color: 'indigo' | 'violet' | 'cyan' | 'emerald' | 'amber';
   suffix?: string;
+  subtitle?: string;
   loading?: boolean;
   delay?: number;
 }
@@ -55,10 +56,12 @@ export default function StatCard({
   icon: Icon,
   color,
   suffix,
+  subtitle,
   loading = false,
   delay = 0,
 }: StatCardProps) {
   const c = colorMap[color];
+  const isUnavailable = value === null;
 
   if (loading) {
     return (
@@ -89,9 +92,9 @@ export default function StatCard({
 
       <div className="flex items-baseline gap-2">
         <span className="text-3xl font-bold text-white tracking-tight">
-          {typeof value === 'number' ? value.toLocaleString() : value}
+          {isUnavailable ? '—' : typeof value === 'number' ? value.toLocaleString() : value}
         </span>
-        {suffix && (
+        {!isUnavailable && suffix && (
           <span
             className={`text-sm font-semibold px-2 py-0.5 rounded-full ${c.badgeBg} ${c.badgeText}`}
           >
@@ -99,6 +102,12 @@ export default function StatCard({
           </span>
         )}
       </div>
+      {subtitle && !isUnavailable && (
+        <p className="text-xs text-dark-300 mt-2">{subtitle}</p>
+      )}
+      {isUnavailable && (
+        <p className="text-xs text-accent-amber mt-2">Sin acceso (falta política RLS)</p>
+      )}
     </div>
   );
 }
