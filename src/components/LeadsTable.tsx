@@ -6,6 +6,7 @@ import {
   Mail,
   CirclePlay,
   Filter,
+  Users,
 } from 'lucide-react';
 import type { Prospect, StatusFilter } from '../types/supabase';
 
@@ -17,7 +18,8 @@ function StatusBadge({ status }: { status: Prospect['status'] }) {
     pending: { label: 'Pendiente', className: 'badge-pending' },
   };
 
-  const { label, className } = config[status] ?? config.pending;
+  const configKey = status as keyof typeof config;
+  const { label, className } = config[configKey] ?? config.pending;
 
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${className}`}>
@@ -157,6 +159,9 @@ export default function LeadsTable({
               <th className="text-left px-5 py-3.5 text-xs font-semibold text-dark-200 uppercase tracking-wider">
                 Último Seguimiento
               </th>
+              <th className="text-left px-5 py-3.5 text-xs font-semibold text-dark-200 uppercase tracking-wider">
+                Enriquecido
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -164,7 +169,7 @@ export default function LeadsTable({
               [...Array(5)].map((_, i) => <SkeletonRow key={i} />)
             ) : prospects.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center">
+                <td colSpan={6} className="px-5 py-12 text-center">
                   <div className="flex flex-col items-center gap-3">
                     <Search className="w-8 h-8 text-dark-400" />
                     <p className="text-dark-200 text-sm">No se encontraron prospectos</p>
@@ -183,9 +188,17 @@ export default function LeadsTable({
                       <div className="w-8 h-8 rounded-lg bg-accent-rose/10 flex items-center justify-center flex-shrink-0">
                         <CirclePlay className="w-4 h-4 text-accent-rose" />
                       </div>
-                      <p className="text-sm font-medium text-white truncate max-w-[200px]">
-                        {prospect.channel_name}
-                      </p>
+                      <div>
+                        <p className="text-sm font-medium text-white truncate max-w-[200px]">
+                          {prospect.channel_name}
+                        </p>
+                        {prospect.suscriptores != null && (
+                          <div className="flex items-center gap-1 mt-0.5 text-xs text-dark-300">
+                            <Users className="w-3 h-3" />
+                            {new Intl.NumberFormat('es-MX').format(prospect.suscriptores)} subs
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="px-5 py-4">
@@ -204,6 +217,11 @@ export default function LeadsTable({
                   <td className="px-5 py-4">
                     <span className="text-sm text-dark-200">
                       {formatDate(prospect.last_followup)}
+                    </span>
+                  </td>
+                  <td className="px-5 py-4">
+                    <span className="text-sm text-dark-300">
+                      {formatDate(prospect.fecha_enriquecimiento)}
                     </span>
                   </td>
                 </tr>

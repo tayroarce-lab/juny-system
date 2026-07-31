@@ -1,30 +1,41 @@
 // ─── Database Row Types ─────────────────────────────────────────────
 
 export interface ReadyToSend {
-  channel_name: string;
-  email: string;
-  video_title?: string;
-  status: 'pending' | 'in_sequence' | 'replied';
+  channel_id: string;
+  channel_name: string | null;
+  email: string | null;
+  email_source: string | null;
+  suscriptores: number | null;
+  avg_views_5_videos: number | null;
+  ultimo_video_titulo: string | null;
+  ai_diagnosis: string | null;
+  ai_subject_line: string | null;
+  status: 'pending' | 'in_sequence' | 'replied' | string;
+  cuenta_email_asignada: string | null;
+  fecha_enriquecimiento: string | null;
 }
 
 export interface SequenceTracker {
-  id: string;
-  email: string;
+  id: number;
+  channel_id: string | null;
+  email: string | null;
+  cuenta_email: string | null;
   day1_sent_at: string | null;
   day4_sent_at: string | null;
   day9_sent_at: string | null;
   day14_sent_at: string | null;
   thread_id?: string | null;
-  replied: boolean;
-  sending_account: string;
+  replied: boolean | null;
+  sending_account: string | null;
+  fecha_entrada: string | null;
 }
 
 export interface DashboardMetrics {
-  total_leads: number;
-  total_contacted: number;
-  total_replied: number;
-  active_in_sequence: number;
-  reply_rate_percentage: number;
+  total_leads: number | null;
+  total_contacted: number | null;
+  total_replied: number | null;
+  active_in_sequence: number | null;
+  reply_rate_percentage: number | null;
 }
 
 // ─── Derived / Chart Types ──────────────────────────────────────────
@@ -44,10 +55,12 @@ export interface AccountPerformance {
 // ─── Prospect (joined view) ────────────────────────────────────────
 
 export interface Prospect {
-  id: string;
+  id: string; // we will use channel_id for this
   channel_name: string;
   email: string;
-  status: 'pending' | 'in_sequence' | 'replied';
+  status: string;
+  suscriptores: number | null;
+  fecha_enriquecimiento: string | null;
   sending_account: string | null;
   last_followup: string | null;
 }

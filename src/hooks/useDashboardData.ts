@@ -41,18 +41,18 @@ function getDemoData() {
   ];
 
   const prospects: Prospect[] = [
-    { id: '1', channel_name: 'TechReview Pro', email: 'contact@techreviewpro.com', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-25T14:30:00Z' },
-    { id: '2', channel_name: 'Gaming Universe', email: 'hello@gaminguniverse.gg', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T10:15:00Z' },
-    { id: '3', channel_name: 'Cocina Creativa MX', email: 'cocina@creativamx.com', status: 'in_sequence', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-26T16:45:00Z' },
-    { id: '4', channel_name: 'FitLife Academy', email: 'partnerships@fitlifeacademy.com', status: 'replied', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-24T09:00:00Z' },
-    { id: '5', channel_name: 'Digital Nomad Diaries', email: 'collab@nomaddiaries.io', status: 'pending', sending_account: null, last_followup: null },
-    { id: '6', channel_name: 'ScienceExplained', email: 'team@sciexplained.com', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T08:30:00Z' },
-    { id: '7', channel_name: 'MusicMasters ESP', email: 'info@musicmasters.es', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-23T12:00:00Z' },
-    { id: '8', channel_name: 'AutoTech Reviews', email: 'autotech@reviews.com', status: 'in_sequence', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-26T11:00:00Z' },
-    { id: '9', channel_name: 'Travel Vlog MX', email: 'hola@travelvlogmx.com', status: 'pending', sending_account: null, last_followup: null },
-    { id: '10', channel_name: 'CodeCraft Academy', email: 'edu@codecraft.dev', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T14:20:00Z' },
-    { id: '11', channel_name: 'Crypto Insights', email: 'contact@cryptoinsights.io', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-22T17:00:00Z' },
-    { id: '12', channel_name: 'DIY Home Projects', email: 'projects@diyhome.com', status: 'in_sequence', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-25T09:45:00Z' },
+    { id: '1', channel_name: 'TechReview Pro', email: 'contact@techreviewpro.com', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-25T14:30:00Z', suscriptores: 154000, fecha_enriquecimiento: '2026-07-20T10:00:00Z' },
+    { id: '2', channel_name: 'Gaming Universe', email: 'hello@gaminguniverse.gg', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T10:15:00Z', suscriptores: 85000, fecha_enriquecimiento: '2026-07-21T11:00:00Z' },
+    { id: '3', channel_name: 'Cocina Creativa MX', email: 'cocina@creativamx.com', status: 'in_sequence', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-26T16:45:00Z', suscriptores: 230000, fecha_enriquecimiento: '2026-07-22T09:30:00Z' },
+    { id: '4', channel_name: 'FitLife Academy', email: 'partnerships@fitlifeacademy.com', status: 'replied', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-24T09:00:00Z', suscriptores: 45000, fecha_enriquecimiento: '2026-07-19T14:20:00Z' },
+    { id: '5', channel_name: 'Digital Nomad Diaries', email: 'collab@nomaddiaries.io', status: 'pending', sending_account: null, last_followup: null, suscriptores: 12000, fecha_enriquecimiento: '2026-07-28T08:00:00Z' },
+    { id: '6', channel_name: 'ScienceExplained', email: 'team@sciexplained.com', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T08:30:00Z', suscriptores: 310000, fecha_enriquecimiento: '2026-07-23T15:45:00Z' },
+    { id: '7', channel_name: 'MusicMasters ESP', email: 'info@musicmasters.es', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-23T12:00:00Z', suscriptores: 92000, fecha_enriquecimiento: '2026-07-18T16:00:00Z' },
+    { id: '8', channel_name: 'AutoTech Reviews', email: 'autotech@reviews.com', status: 'in_sequence', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-26T11:00:00Z', suscriptores: 56000, fecha_enriquecimiento: '2026-07-24T10:15:00Z' },
+    { id: '9', channel_name: 'Travel Vlog MX', email: 'hola@travelvlogmx.com', status: 'pending', sending_account: null, last_followup: null, suscriptores: 18000, fecha_enriquecimiento: '2026-07-28T09:30:00Z' },
+    { id: '10', channel_name: 'CodeCraft Academy', email: 'edu@codecraft.dev', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T14:20:00Z', suscriptores: 110000, fecha_enriquecimiento: '2026-07-25T11:20:00Z' },
+    { id: '11', channel_name: 'Crypto Insights', email: 'contact@cryptoinsights.io', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-22T17:00:00Z', suscriptores: 78000, fecha_enriquecimiento: '2026-07-17T13:45:00Z' },
+    { id: '12', channel_name: 'DIY Home Projects', email: 'projects@diyhome.com', status: 'in_sequence', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-25T09:45:00Z', suscriptores: 135000, fecha_enriquecimiento: '2026-07-22T08:00:00Z' },
   ];
 
   return { metrics, funnel, accountPerf, prospects };
@@ -153,7 +153,8 @@ export function useDashboardData() {
       // 3. Prospects from ready_to_send
       const { data: leads, error: leadsErr } = await supabase
         .from('ready_to_send')
-        .select('*');
+        .select('*')
+        .order('fecha_enriquecimiento', { ascending: false, nullsFirst: false });
 
       if (leadsErr) {
         console.warn('ready_to_send query failed (possibly RLS):', leadsErr.message);
@@ -162,16 +163,18 @@ export function useDashboardData() {
       // Build a lookup from sequence_tracker by email
       const seqByEmail = new Map<string, SequenceTracker>();
       for (const s of seqs) {
-        seqByEmail.set(s.email, s);
+        if (s.email) seqByEmail.set(s.email, s);
       }
 
       const mapped: Prospect[] = ((leads ?? []) as any[]).map((l, index) => {
-        const seq = seqByEmail.get(l.email);
+        const seq = l.email ? seqByEmail.get(l.email) : undefined;
         return {
-          id: l.id ?? `lead-${index}`,
+          id: l.channel_id ?? `lead-${index}`,
           channel_name: l.channel_name ?? '—',
           email: l.email ?? '—',
           status: l.status ?? 'pending',
+          suscriptores: l.suscriptores ?? null,
+          fecha_enriquecimiento: l.fecha_enriquecimiento ?? null,
           sending_account: seq?.sending_account ?? null,
           last_followup: seq ? lastFollowup(seq) : null,
         };
