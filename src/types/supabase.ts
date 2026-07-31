@@ -24,6 +24,10 @@ export interface SequenceTracker {
   day4_sent_at: string | null;
   day9_sent_at: string | null;
   day14_sent_at: string | null;
+  day1_sent?: string | null;
+  day4_sent?: string | null;
+  day9_sent?: string | null;
+  day14_sent?: string | null;
   thread_id?: string | null;
   replied: boolean | null;
   sending_account: string | null;

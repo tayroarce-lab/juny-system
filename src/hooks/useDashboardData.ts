@@ -14,7 +14,7 @@ const FUNNEL_COLORS = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd'];
 
 // ─── Helper: derive last followup date ──────────────────────────────
 function lastFollowup(s: SequenceTracker): string | null {
-  return s.day14_sent_at ?? s.day9_sent_at ?? s.day4_sent_at ?? s.day1_sent_at ?? null;
+  return (s.day14_sent_at || s.day14_sent) ?? (s.day9_sent_at || s.day9_sent) ?? (s.day4_sent_at || s.day4_sent) ?? (s.day1_sent_at || s.day1_sent) ?? null;
 }
 
 // ─── Demo data for when Supabase isn't configured ───────────────────
@@ -115,10 +115,10 @@ export function useDashboardData() {
       const seqs = (sequences ?? []) as SequenceTracker[];
 
       // ── Funnel stages
-      const day1 = seqs.filter((s) => s.day1_sent_at).length;
-      const day4 = seqs.filter((s) => s.day4_sent_at).length;
-      const day9 = seqs.filter((s) => s.day9_sent_at).length;
-      const day14 = seqs.filter((s) => s.day14_sent_at).length;
+      const day1 = seqs.filter((s) => s.day1_sent_at || s.day1_sent).length;
+      const day4 = seqs.filter((s) => s.day4_sent_at || s.day4_sent).length;
+      const day9 = seqs.filter((s) => s.day9_sent_at || s.day9_sent).length;
+      const day14 = seqs.filter((s) => s.day14_sent_at || s.day14_sent).length;
 
       setFunnel([
         { stage: 'Day 1', count: day1, fill: FUNNEL_COLORS[0] },
@@ -134,10 +134,10 @@ export function useDashboardData() {
         if (!acctMap.has(acct)) acctMap.set(acct, { totalSent: 0, replies: 0 });
         const entry = acctMap.get(acct)!;
         const sent =
-          (s.day1_sent_at ? 1 : 0) +
-          (s.day4_sent_at ? 1 : 0) +
-          (s.day9_sent_at ? 1 : 0) +
-          (s.day14_sent_at ? 1 : 0);
+          ((s.day1_sent_at || s.day1_sent) ? 1 : 0) +
+          ((s.day4_sent_at || s.day4_sent) ? 1 : 0) +
+          ((s.day9_sent_at || s.day9_sent) ? 1 : 0) +
+          ((s.day14_sent_at || s.day14_sent) ? 1 : 0);
         entry.totalSent += sent;
         if (s.replied) entry.replies += 1;
       }
