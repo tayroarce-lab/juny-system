@@ -184,7 +184,7 @@ export function useDashboardData() {
       // ── Account performance
       const acctMap = new Map<string, { totalSent: number; replies: number }>();
       for (const s of seqs) {
-        const acct = s.sending_account ?? 'Unknown';
+        const acct = s.cuenta_email || s.sending_account || 'Unknown';
         if (!acctMap.has(acct)) acctMap.set(acct, { totalSent: 0, replies: 0 });
         const entry = acctMap.get(acct)!;
         const sent =
@@ -229,7 +229,7 @@ export function useDashboardData() {
           status: l.status ?? 'pending',
           suscriptores: l.suscriptores ?? null,
           fecha_enriquecimiento: l.fecha_enriquecimiento ?? null,
-          sending_account: seq?.sending_account ?? null,
+          sending_account: (seq?.cuenta_email || seq?.sending_account) ?? null,
           last_followup: seq ? lastFollowup(seq) : null,
         };
       });
