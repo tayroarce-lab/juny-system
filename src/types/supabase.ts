@@ -61,7 +61,6 @@ export interface Prospect {
   status: string;
   suscriptores: number | null;
   fecha_enriquecimiento: string | null;
-  sending_account: string | null;
   last_followup: string | null;
 }
 

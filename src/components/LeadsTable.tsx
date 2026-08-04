@@ -151,9 +151,6 @@ export default function LeadsTable({
                 </div>
               </th>
               <th className="text-left px-5 py-3.5 text-xs font-semibold text-dark-200 uppercase tracking-wider">
-                Cuenta Emisora
-              </th>
-              <th className="text-left px-5 py-3.5 text-xs font-semibold text-dark-200 uppercase tracking-wider">
                 Estado
               </th>
               <th className="text-left px-5 py-3.5 text-xs font-semibold text-dark-200 uppercase tracking-wider">
@@ -169,7 +166,7 @@ export default function LeadsTable({
               [...Array(5)].map((_, i) => <SkeletonRow key={i} />)
             ) : prospects.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-12 text-center">
+                <td colSpan={5} className="px-5 py-12 text-center">
                   <div className="flex flex-col items-center gap-3">
                     <Search className="w-8 h-8 text-dark-400" />
                     <p className="text-dark-200 text-sm">No se encontraron prospectos</p>
@@ -204,11 +201,6 @@ export default function LeadsTable({
                   <td className="px-5 py-4">
                     <span className="text-sm text-dark-100 truncate block max-w-[220px]">
                       {prospect.email}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4">
-                    <span className="text-sm text-dark-200 truncate block max-w-[180px]">
-                      {prospect.sending_account ?? '—'}
                     </span>
                   </td>
                   <td className="px-5 py-4">
