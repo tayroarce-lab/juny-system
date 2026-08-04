@@ -5,7 +5,6 @@ import type {
   SequenceTracker,
   Prospect,
   FunnelStage,
-  AccountPerformance,
   StatusFilter,
 } from '../types/supabase';
 
@@ -36,12 +35,6 @@ function getDemoData() {
     { stage: 'Day 14', count: 289, fill: FUNNEL_COLORS[3] },
   ];
 
-  const accountPerf: AccountPerformance[] = [
-    { account: 'agencyjuny0@gmail.com', totalSent: 892, replies: 54 },
-    { account: 'agencyjuny1@gmail.com', totalSent: 756, replies: 41 },
-    { account: 'agencyjuny2@gmail.com', totalSent: 523, replies: 32 },
-  ];
-
   const prospects: Prospect[] = [
     { id: '1', channel_name: 'TechReview Pro', email: 'contact@techreviewpro.com', status: 'replied', sending_account: 'agencyjuny0@gmail.com', last_followup: '2026-07-25T14:30:00Z', suscriptores: 154000, fecha_enriquecimiento: '2026-07-20T10:00:00Z' },
     { id: '2', channel_name: 'Gaming Universe', email: 'hello@gaminguniverse.gg', status: 'in_sequence', sending_account: 'agencyjuny1@gmail.com', last_followup: '2026-07-27T10:15:00Z', suscriptores: 85000, fecha_enriquecimiento: '2026-07-21T11:00:00Z' },
@@ -57,14 +50,13 @@ function getDemoData() {
     { id: '12', channel_name: 'DIY Home Projects', email: 'projects@diyhome.com', status: 'in_sequence', sending_account: 'agencyjuny2@gmail.com', last_followup: '2026-07-25T09:45:00Z', suscriptores: 135000, fecha_enriquecimiento: '2026-07-22T08:00:00Z' },
   ];
 
-  return { metrics, funnel, accountPerf, prospects };
+  return { metrics, funnel, prospects };
 }
 
 // ─── Hook ───────────────────────────────────────────────────────────
 export function useDashboardData() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [funnel, setFunnel] = useState<FunnelStage[]>([]);
-  const [accountPerf, setAccountPerf] = useState<AccountPerformance[]>([]);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastSync, setLastSync] = useState<Date | null>(null);
@@ -87,7 +79,6 @@ export function useDashboardData() {
       const demo = getDemoData();
       setMetrics(demo.metrics);
       setFunnel(demo.funnel);
-      setAccountPerf(demo.accountPerf);
       setProspects(demo.prospects);
       setLastSync(new Date());
       setDemoMode(true);
@@ -157,7 +148,7 @@ export function useDashboardData() {
               : null,
       });
 
-      // 2. Sequence tracker (for funnel + account perf + prospect enrichment)
+      // 2. Sequence tracker (for funnel + prospect enrichment)
       const { data: sequences, error: seqErr } = await supabase
         .from('sequence_tracker')
         .select('*');
@@ -180,29 +171,6 @@ export function useDashboardData() {
         { stage: 'Day 9', count: day9, fill: FUNNEL_COLORS[2] },
         { stage: 'Day 14', count: day14, fill: FUNNEL_COLORS[3] },
       ]);
-
-      // ── Account performance
-      const acctMap = new Map<string, { totalSent: number; replies: number }>();
-      for (const s of seqs) {
-        const acct = s.cuenta_email || s.sending_account || 'Unknown';
-        if (!acctMap.has(acct)) acctMap.set(acct, { totalSent: 0, replies: 0 });
-        const entry = acctMap.get(acct)!;
-        const sent =
-          ((s.day1_sent_at || s.day1_sent) ? 1 : 0) +
-          ((s.day4_sent_at || s.day4_sent) ? 1 : 0) +
-          ((s.day9_sent_at || s.day9_sent) ? 1 : 0) +
-          ((s.day14_sent_at || s.day14_sent) ? 1 : 0);
-        entry.totalSent += sent;
-        if (s.replied) entry.replies += 1;
-      }
-
-      setAccountPerf(
-        Array.from(acctMap.entries()).map(([account, v]) => ({
-          account,
-          totalSent: v.totalSent,
-          replies: v.replies,
-        }))
-      );
 
       // 3. Prospects from ready_to_send
       const { data: leads, error: leadsErr } = await supabase
@@ -275,7 +243,6 @@ export function useDashboardData() {
   return {
     metrics,
     funnel,
-    accountPerf,
     prospects: paginatedProspects,
     totalProspects: filtered.length,
     page,

@@ -15,7 +15,7 @@ import { useDashboardData } from './hooks/useDashboardData';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
 import StatCard from './components/StatCard';
-import { FunnelChart, AccountChart } from './components/PerformanceCharts';
+import { FunnelChart } from './components/PerformanceCharts';
 import LeadsTable from './components/LeadsTable';
 import LoginPage from './components/LoginPage';
 import { isSupabaseConfigured } from './lib/supabase';
@@ -25,7 +25,6 @@ export default function App() {
   const {
     metrics,
     funnel,
-    accountPerf,
     prospects,
     totalProspects,
     page,
@@ -170,9 +169,8 @@ export default function App() {
           </section>
 
           {/* ── Charts ───────────────────────────────────────── */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <section className="grid grid-cols-1 gap-4">
             <FunnelChart data={funnel} loading={loading} />
-            <AccountChart data={accountPerf} loading={loading} />
           </section>
 
           {/* ── Leads Table ──────────────────────────────────── */}

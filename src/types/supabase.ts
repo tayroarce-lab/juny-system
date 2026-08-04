@@ -52,12 +52,6 @@ export interface FunnelStage {
   fill: string;
 }
 
-export interface AccountPerformance {
-  account: string;
-  totalSent: number;
-  replies: number;
-}
-
 // ─── Prospect (joined view) ────────────────────────────────────────
 
 export interface Prospect {

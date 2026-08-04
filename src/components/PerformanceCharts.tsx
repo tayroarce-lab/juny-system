@@ -7,10 +7,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
   Cell,
 } from 'recharts';
-import type { FunnelStage, AccountPerformance } from '../types/supabase';
+import type { FunnelStage } from '../types/supabase';
 
 // ─── Custom Tooltip ─────────────────────────────────────────────────
 function CustomTooltip({ active, payload, label }: any) {
@@ -76,82 +75,6 @@ export function FunnelChart({ data, loading }: FunnelChartProps) {
               <Cell key={index} fill={entry.fill} />
             ))}
           </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-// ─── Account Performance Chart ──────────────────────────────────────
-interface AccountChartProps {
-  data: AccountPerformance[];
-  loading?: boolean;
-}
-
-export function AccountChart({ data, loading }: AccountChartProps) {
-  if (loading) {
-    return (
-      <div className="glass-card p-6">
-        <div className="skeleton h-5 w-52 mb-6" />
-        <div className="skeleton h-64 w-full rounded-xl" />
-      </div>
-    );
-  }
-
-  // Shorten email labels for display
-  const chartData = data.map((d) => ({
-    ...d,
-    shortAccount: d.account.split('@')[0],
-  }));
-
-  return (
-    <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-white">Rendimiento por Cuenta</h3>
-          <p className="text-sm text-dark-200 mt-1">Comparativa de envíos y respuestas</p>
-        </div>
-      </div>
-
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={chartData} barCategoryGap="20%">
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.05)"
-            vertical={false}
-          />
-          <XAxis
-            dataKey="shortAccount"
-            tick={{ fill: '#a8a8c8', fontSize: 12 }}
-            axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: '#a8a8c8', fontSize: 13 }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
-          <Legend
-            wrapperStyle={{ paddingTop: 12, fontSize: 13 }}
-            formatter={(value) => (
-              <span className="text-dark-100">{value}</span>
-            )}
-          />
-          <Bar
-            dataKey="totalSent"
-            name="Enviados"
-            fill="#6366f1"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={45}
-          />
-          <Bar
-            dataKey="replies"
-            name="Respuestas"
-            fill="#10b981"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={45}
-          />
         </BarChart>
       </ResponsiveContainer>
     </div>
