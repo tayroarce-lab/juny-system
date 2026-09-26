@@ -132,6 +132,7 @@ export default function App() {
               onFilterChange={inbox.setFilter}
               onMarkAsRead={inbox.markAsRead}
               onToggleGestionado={inbox.toggleGestionado}
+              onSendReply={inbox.sendReply}
             />
           ) : (
           <>

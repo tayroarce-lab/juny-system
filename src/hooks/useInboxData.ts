@@ -90,6 +90,46 @@ export function useInboxData() {
     await supabase.from('inbox_messages').update({ gestionado: value }).eq('id', id);
   }, []);
 
+  // ── Send a reply through the WF-08 n8n webhook (Gmail thread reply or
+  // Brevo relay depending on which account received the message).
+  const sendReply = useCallback(
+    async (message: InboxMessage, replyText: string): Promise<{ ok: boolean; error?: string }> => {
+      const webhookUrl = import.meta.env.VITE_N8N_REPLY_WEBHOOK_URL as string | undefined;
+      const secret = import.meta.env.VITE_N8N_REPLY_SECRET as string | undefined;
+      if (!webhookUrl || !secret) {
+        return { ok: false, error: 'Falta configurar el webhook de respuestas (.env).' };
+      }
+      if (message.id.startsWith('demo-')) {
+        setMessages((prev) => prev.map((m) => (m.id === message.id ? { ...m, gestionado: true } : m)));
+        return { ok: true };
+      }
+      try {
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Panel-Secret': secret },
+          body: JSON.stringify({
+            id: message.id,
+            to_email: message.from_email,
+            subject: message.subject,
+            cuenta_email: message.cuenta_email,
+            thread_id: message.thread_id,
+            reply_text: replyText,
+            original_text: message.body_text,
+          }),
+        });
+        const data = await res.json().catch(() => ({}) as { success?: boolean; error?: string });
+        if (!res.ok || data?.success === false) {
+          return { ok: false, error: data?.error || `Error ${res.status}` };
+        }
+        setMessages((prev) => prev.map((m) => (m.id === message.id ? { ...m, gestionado: true } : m)));
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : 'Error de red' };
+      }
+    },
+    []
+  );
+
   const filtered = messages.filter((m) => {
     if (filter === 'unread') return !m.leido;
     if (filter === 'unmanaged') return !m.gestionado;
@@ -110,5 +150,6 @@ export function useInboxData() {
     refresh: fetchMessages,
     markAsRead,
     toggleGestionado,
+    sendReply,
   };
 }

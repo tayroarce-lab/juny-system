@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Inbox, Mail, MailOpen, CheckCircle2, Circle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Inbox, Mail, MailOpen, CheckCircle2, Circle, Loader2, Send } from 'lucide-react';
 import type { InboxMessage, InboxFilter } from '../types/supabase';
 
 // ─── Format date ────────────────────────────────────────────────────
@@ -23,6 +23,7 @@ interface InboxPanelProps {
   onFilterChange: (f: InboxFilter) => void;
   onMarkAsRead: (id: string) => void;
   onToggleGestionado: (id: string, value: boolean) => void;
+  onSendReply: (message: InboxMessage, replyText: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
 export default function InboxPanel({
@@ -34,11 +35,23 @@ export default function InboxPanel({
   onFilterChange,
   onMarkAsRead,
   onToggleGestionado,
+  onSendReply,
 }: InboxPanelProps) {
   // Track the selected message object itself (not just its id) so the
   // detail view stays open even if the item drops out of the filtered
   // list — e.g. marking it as read while viewing the "No leídos" filter.
   const [selected, setSelected] = useState<InboxMessage | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+
+  // Reset the reply box whenever the selected message changes.
+  useEffect(() => {
+    setReplyText('');
+    setSendError(null);
+    setSent(false);
+  }, [selected?.id]);
 
   const filterOptions: { value: InboxFilter; label: string }[] = [
     { value: 'unread', label: 'No leídos' },
@@ -56,6 +69,21 @@ export default function InboxPanel({
     const next = !selected.gestionado;
     setSelected({ ...selected, gestionado: next });
     onToggleGestionado(selected.id, next);
+  }
+
+  async function handleSendReply() {
+    if (!selected || !replyText.trim() || sending) return;
+    setSending(true);
+    setSendError(null);
+    const result = await onSendReply(selected, replyText.trim());
+    setSending(false);
+    if (result.ok) {
+      setSelected({ ...selected, gestionado: true });
+      setReplyText('');
+      setSent(true);
+    } else {
+      setSendError(result.error || 'No se pudo enviar la respuesta.');
+    }
   }
 
   return (
@@ -195,9 +223,34 @@ export default function InboxPanel({
                 </p>
               </div>
 
-              <p className="text-[11px] text-dark-400 mt-6">
-                Para responder, contesta este correo directamente desde la cuenta que lo recibió.
-              </p>
+              <div className="border-t border-glass-border pt-4 mt-6">
+                <label className="text-xs font-medium text-dark-200 mb-2 block">Responder</label>
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  disabled={sending}
+                  placeholder="Escribe tu respuesta..."
+                  rows={4}
+                  className="w-full rounded-xl bg-dark-700/60 border border-dark-500/50 text-sm text-white placeholder:text-dark-300 p-3 focus:outline-none focus:border-accent-indigo/50 disabled:opacity-50 resize-none"
+                />
+                <div className="flex items-center justify-between gap-3 mt-2">
+                  <p className="text-[11px] text-dark-400">
+                    {selected.thread_id
+                      ? 'Se envía dentro del hilo real de Gmail.'
+                      : 'Se envía como correo nuevo (Re:) citando el original.'}
+                  </p>
+                  <button
+                    onClick={handleSendReply}
+                    disabled={sending || !replyText.trim()}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium bg-accent-indigo/20 text-accent-indigo hover:bg-accent-indigo/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+                  >
+                    {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                    {sending ? 'Enviando...' : 'Enviar respuesta'}
+                  </button>
+                </div>
+                {sendError && <p className="text-xs text-accent-rose mt-2">{sendError}</p>}
+                {sent && !sendError && <p className="text-xs text-accent-emerald mt-2">Respuesta enviada.</p>}
+              </div>
             </div>
           )}
         </div>
