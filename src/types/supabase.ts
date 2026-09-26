@@ -64,6 +64,25 @@ export interface Prospect {
   last_followup: string | null;
 }
 
+// ─── Inbox (respuestas entrantes) ──────────────────────────────────
+
+export interface InboxMessage {
+  id: string;
+  channel_id: string | null;
+  cuenta_email: string | null;
+  from_email: string | null;
+  from_name: string | null;
+  subject: string | null;
+  preview: string | null;
+  body_html: string | null;
+  body_text: string | null;
+  received_at: string;
+  thread_id: string | null;
+  leido: boolean;
+  gestionado: boolean;
+}
+
 // ─── Filter / UI types ─────────────────────────────────────────────
 
 export type StatusFilter = 'all' | 'in_sequence' | 'replied';
+export type InboxFilter = 'all' | 'unread' | 'unmanaged';

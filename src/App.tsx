@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Users,
   Send,
@@ -10,18 +10,26 @@ import {
   Loader2,
   Search,
   CheckCircle2,
+  LayoutDashboard,
+  Inbox,
 } from 'lucide-react';
 import { useDashboardData } from './hooks/useDashboardData';
+import { useInboxData } from './hooks/useInboxData';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
 import StatCard from './components/StatCard';
 import { FunnelChart } from './components/PerformanceCharts';
 import LeadsTable from './components/LeadsTable';
+import InboxPanel from './components/InboxPanel';
 import LoginPage from './components/LoginPage';
 import { isSupabaseConfigured } from './lib/supabase';
 
+type View = 'dashboard' | 'inbox';
+
 export default function App() {
   const auth = useAuth();
+  const [view, setView] = useState<View>('dashboard');
+  const inbox = useInboxData();
   const {
     metrics,
     funnel,
@@ -83,6 +91,50 @@ export default function App() {
         />
 
         <main className="px-6 pb-12 space-y-8">
+          {/* ── View switcher ────────────────────────────────── */}
+          <div className="flex items-center gap-1 bg-dark-700/60 border border-dark-500/50 rounded-xl p-1 w-fit animate-fade-in-up">
+            <button
+              onClick={() => setView('dashboard')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                view === 'dashboard'
+                  ? 'bg-accent-indigo/20 text-accent-indigo'
+                  : 'text-dark-200 hover:text-white hover:bg-dark-600/50'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
+            </button>
+            <button
+              onClick={() => setView('inbox')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                view === 'inbox'
+                  ? 'bg-accent-indigo/20 text-accent-indigo'
+                  : 'text-dark-200 hover:text-white hover:bg-dark-600/50'
+              }`}
+            >
+              <Inbox className="w-4 h-4" />
+              Bandeja de Entrada
+              {inbox.unreadCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-accent-indigo text-white text-[10px] font-bold leading-none">
+                  {inbox.unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {view === 'inbox' ? (
+            <InboxPanel
+              messages={inbox.messages}
+              totalMessages={inbox.totalMessages}
+              unreadCount={inbox.unreadCount}
+              filter={inbox.filter}
+              loading={inbox.loading}
+              onFilterChange={inbox.setFilter}
+              onMarkAsRead={inbox.markAsRead}
+              onToggleGestionado={inbox.toggleGestionado}
+            />
+          ) : (
+          <>
           {/* ── Error banner ─────────────────────────────────── */}
           {demoMode && (
             <div className="flex items-center gap-3 p-4 rounded-xl bg-accent-amber/10 border border-accent-amber/20 animate-fade-in-up">
@@ -188,6 +240,8 @@ export default function App() {
               onFilterChange={setStatusFilter}
             />
           </section>
+          </>
+          )}
         </main>
       </div>
     </div>
