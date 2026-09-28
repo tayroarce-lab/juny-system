@@ -160,10 +160,18 @@ export function useDashboardData() {
       const seqs = (sequences ?? []) as SequenceTracker[];
 
       // ── Funnel stages
-      const day1 = seqs.filter((s) => s.day1_sent_at || s.day1_sent).length;
-      const day4 = seqs.filter((s) => s.day4_sent_at || s.day4_sent).length;
-      const day9 = seqs.filter((s) => s.day9_sent_at || s.day9_sent).length;
-      const day14 = seqs.filter((s) => s.day14_sent_at || s.day14_sent).length;
+      // Exact server-side counts: `seqs` is truncated at Supabase's 1000-row
+      // cap, which would pin every bar at <=1000. Fall back to the fetched
+      // array if a count fails.
+      const stageCount = async (col: string, fallback: number): Promise<number> =>
+        (await countExact('sequence_tracker', (q) => q.not(col, 'is', null))) ?? fallback;
+
+      const [day1, day4, day9, day14] = await Promise.all([
+        stageCount('day1_sent_at', seqs.filter((s) => s.day1_sent_at || s.day1_sent).length),
+        stageCount('day4_sent_at', seqs.filter((s) => s.day4_sent_at || s.day4_sent).length),
+        stageCount('day9_sent_at', seqs.filter((s) => s.day9_sent_at || s.day9_sent).length),
+        stageCount('day14_sent_at', seqs.filter((s) => s.day14_sent_at || s.day14_sent).length),
+      ]);
 
       setFunnel([
         { stage: 'Day 1', count: day1, fill: FUNNEL_COLORS[0] },
