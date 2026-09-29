@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   LayoutDashboard,
   Inbox,
+  Mail,
 } from 'lucide-react';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useInboxData } from './hooks/useInboxData';
@@ -21,10 +22,11 @@ import StatCard from './components/StatCard';
 import { FunnelChart } from './components/PerformanceCharts';
 import LeadsTable from './components/LeadsTable';
 import InboxPanel from './components/InboxPanel';
+import BrevoPanel from './components/BrevoPanel';
 import LoginPage from './components/LoginPage';
 import { isSupabaseConfigured } from './lib/supabase';
 
-type View = 'dashboard' | 'inbox';
+type View = 'dashboard' | 'inbox' | 'brevo';
 
 export default function App() {
   const auth = useAuth();
@@ -120,9 +122,22 @@ export default function App() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => setView('brevo')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                view === 'brevo'
+                  ? 'bg-accent-indigo/20 text-accent-indigo'
+                  : 'text-dark-200 hover:text-white hover:bg-dark-600/50'
+              }`}
+            >
+              <Mail className="w-4 h-4" />
+              Brevo
+            </button>
           </div>
 
-          {view === 'inbox' ? (
+          {view === 'brevo' ? (
+            <BrevoPanel />
+          ) : view === 'inbox' ? (
             <InboxPanel
               messages={inbox.messages}
               totalMessages={inbox.totalMessages}
