@@ -23,6 +23,7 @@ import { FunnelChart } from './components/PerformanceCharts';
 import LeadsTable from './components/LeadsTable';
 import InboxPanel from './components/InboxPanel';
 import BrevoPanel from './components/BrevoPanel';
+import ActivityStats from './components/ActivityStats';
 import LoginPage from './components/LoginPage';
 import { isSupabaseConfigured } from './lib/supabase';
 
@@ -235,6 +236,9 @@ export default function App() {
               delay={300}
             />
           </section>
+
+          {/* ── Activity: averages per day / week / month ────── */}
+          <ActivityStats />
 
           {/* ── Charts ───────────────────────────────────────── */}
           <section className="grid grid-cols-1 gap-4">
