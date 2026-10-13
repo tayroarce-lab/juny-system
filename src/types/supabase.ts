@@ -82,6 +82,34 @@ export interface InboxMessage {
   gestionado: boolean;
 }
 
+// ─── Seguimiento de contactos (contact_status / inbox_replies) ─────
+
+export type ContactStatusValue =
+  | 'nuevo'
+  | 'en_conversacion'
+  | 'whatsapp'
+  | 'llamada'
+  | 'cerrado'
+  | 'perdido';
+
+export interface ContactStatus {
+  email: string;
+  status: ContactStatusValue;
+  note: string | null;
+  updated_at: string | null;
+}
+
+// Respuesta enviada desde el panel (la registra WF-08).
+export interface InboxReply {
+  id: string;
+  message_id: string | null;
+  to_email: string;
+  cuenta_email: string | null;
+  subject: string | null;
+  reply_text: string | null;
+  sent_at: string;
+}
+
 // ─── Filter / UI types ─────────────────────────────────────────────
 
 export type StatusFilter = 'all' | 'in_sequence' | 'replied';

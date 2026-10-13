@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Users,
   Send,
@@ -13,26 +13,36 @@ import {
   LayoutDashboard,
   Inbox,
   Mail,
+  Users as UsersIcon,
 } from 'lucide-react';
 import { useDashboardData } from './hooks/useDashboardData';
 import { useInboxData } from './hooks/useInboxData';
+import { useContactTracking } from './hooks/useContactTracking';
+import { buildContacts } from './lib/contacts';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Header';
 import StatCard from './components/StatCard';
 import { FunnelChart } from './components/PerformanceCharts';
 import LeadsTable from './components/LeadsTable';
 import InboxPanel from './components/InboxPanel';
+import ContactsPanel from './components/ContactsPanel';
 import BrevoPanel from './components/BrevoPanel';
 import ActivityStats from './components/ActivityStats';
 import LoginPage from './components/LoginPage';
 import { isSupabaseConfigured } from './lib/supabase';
 
-type View = 'dashboard' | 'inbox' | 'brevo';
+type View = 'dashboard' | 'inbox' | 'contacts' | 'brevo';
 
 export default function App() {
   const auth = useAuth();
   const [view, setView] = useState<View>('dashboard');
   const inbox = useInboxData();
+  const tracking = useContactTracking();
+  const contacts = useMemo(
+    () => buildContacts(inbox.allMessages, tracking.replies, tracking.statuses),
+    [inbox.allMessages, tracking.replies, tracking.statuses]
+  );
+  const pendingContacts = contacts.filter((c) => c.pending).length;
   const {
     metrics,
     funnel,
@@ -124,6 +134,22 @@ export default function App() {
               )}
             </button>
             <button
+              onClick={() => setView('contacts')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                view === 'contacts'
+                  ? 'bg-accent-indigo/20 text-accent-indigo'
+                  : 'text-dark-200 hover:text-white hover:bg-dark-600/50'
+              }`}
+            >
+              <UsersIcon className="w-4 h-4" />
+              Contactos
+              {pendingContacts > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full bg-accent-amber text-dark-900 text-[10px] font-bold leading-none">
+                  {pendingContacts}
+                </span>
+              )}
+            </button>
+            <button
               onClick={() => setView('brevo')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 view === 'brevo'
@@ -138,6 +164,13 @@ export default function App() {
 
           {view === 'brevo' ? (
             <BrevoPanel />
+          ) : view === 'contacts' ? (
+            <ContactsPanel
+              contacts={contacts}
+              tracking={tracking}
+              loading={inbox.loading}
+              onSendReply={inbox.sendReply}
+            />
           ) : view === 'inbox' ? (
             <InboxPanel
               messages={inbox.messages}

@@ -140,6 +140,7 @@ export function useInboxData() {
 
   return {
     messages: filtered,
+    allMessages: messages,
     totalMessages: messages.length,
     unreadCount,
     filter,
